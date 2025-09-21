@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TruthGuard — Community Forum</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50 p-6">
+    <a href="/index.html" class="text-indigo-600">← Home</a>
+    <h1 class="text-2xl font-bold mt-4">Community Forum</h1>
+    <p class="text-gray-600 mt-2">Share reports, discuss verification techniques, and help others.</p>
+    <div class="mt-6 bg-white rounded shadow p-4">
+      <h3 class="font-semibold">Recent Reports</h3>
+      <div id="reportsList" class="mt-3 text-sm text-gray-700">Loading...</div>
+    </div>
+
+    <script>
+      async function loadReports(){
+        try{
+          const r = await fetch('/api/reports');
+          const j = await r.json();
+          const el = document.getElementById('reportsList');
+          if (!j.reports || j.reports.length===0) { el.innerText = 'No reports yet.'; return; }
+          el.innerHTML = j.reports.slice(0,10).map(x => `<div class=\"p-2 border-b\"><strong>Reporter:</strong> ${x.reporter} <br/><em>${x.text.slice(0,200)}</em></div>`).join('');
+        }catch(e){ document.getElementById('reportsList').innerText = 'Error loading reports'; }
+      }
+      loadReports();
+    </script>
+  </body>
+</html>
