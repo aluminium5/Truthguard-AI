@@ -1,0 +1,29 @@
+name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Build and push image
+        run: |
+          gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT }}/truthguard-ai:$GITHUB_SHA
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy truthguard-ai \
+            --image gcr.io/${{ secrets.GCP_PROJECT }}/truthguard-ai:$GITHUB_SHA \
+            --region ${{ secrets.GCP_REGION }} \
+            --platform managed \
+            --allow-unauthenticated

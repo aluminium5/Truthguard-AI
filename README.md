@@ -79,3 +79,16 @@ After deployment, Cloud Run will provide a URL where your site is hosted.
 
 If you want, I can attempt to build and deploy from this machine — I need your confirmation that you want me to run `docker` and `gcloud` here and that you have authenticated `gcloud` locally. If not available, I will provide exact commands to run on your machine.
 
+CI-based deployment using GitHub Actions (no Docker/gcloud locally)
+
+1) Create a Google Cloud service account with `Cloud Run Admin`, `Storage Admin` (for Container Registry), and `Cloud Build Editor` roles. Create and download a JSON key for the service account.
+
+2) In your GitHub repo, add these repository Secrets (Settings → Secrets and variables → Actions):
+- `GCP_PROJECT` — your GCP project id
+- `GCP_SERVICE_ACCOUNT_KEY` — the full JSON contents of the service account key (paste contents)
+- `GCP_REGION` — example: `us-central1`
+
+3) Push your code to the `main` (or `master`) branch. The workflow in `.github/workflows/deploy-cloud-run.yml` will run and deploy to Cloud Run.
+
+If you want, I can prepare the repository and push it to GitHub for you — provide the repo URL or approve the use of `gh` (GitHub CLI) if installed and authenticated here. Otherwise follow the earlier steps to publish via GitHub Desktop and then configure the Actions secrets.
+
